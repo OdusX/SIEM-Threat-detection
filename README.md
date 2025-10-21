@@ -33,7 +33,8 @@ Objective: Detect and respond to brute-force login attempts (Event ID 4625) thro
 
 Simulated brute-force attempts by repeatedly providing incorrect credentials:
 net user testuser Password123! /add
-for ($i=0; $i -lt 10; $i++) {
+for ($i=0; $i -lt 10; $i++) 
+{
   net use \\localhost\IPC$ wrongpass /user:testuser > $null 2>&1
   Start-Sleep -Milliseconds 500
 }
