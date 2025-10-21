@@ -35,7 +35,7 @@ Simulated brute-force attempts by repeatedly providing incorrect credentials:
 net user testuser Password123! /add
 for ($i=0; $i -lt 10; $i++) 
 {
-  net use \\localhost\IPC$wrongpass /user:testuser > $null 2>&1
+  net use \\localhost\IPC$  wrongpass /user:testuser > $null 2>&1
   Start-Sleep -Milliseconds 500
 }
 
@@ -44,18 +44,23 @@ These repeated login failures generated EventCode 4625 in Windows Security logs,
 ## Detection Logic (SPL Query)
 
 The detection was based on identifying multiple failed logons from the same user within a short timeframe:
+ ```spl
 index=* sourcetype=WinEventLog:Security EventCode=4625
 | stats count AS failed_attempts BY Account_Name, Source_Network_Address
 | where failed_attempts >= 5
 
 This query triggers when 5 or more failed login attempts occur, signaling potential brute-force behavior.
+ ```
+
 
 ## Verification
 
 To view raw failed logon events:
+ ```spl
 index=* host=Odus EventCode=4625
 | table _time, Account_Name, Source_Network_Address, Failure_Reason
 | sort - _time
+ ```
 
 ## Alert Configuration
 
