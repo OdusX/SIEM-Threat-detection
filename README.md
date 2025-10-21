@@ -32,13 +32,14 @@ Objective: Detect and respond to brute-force login attempts (Event ID 4625) thro
 ## Attack Simulation
 
 Simulated brute-force attempts by repeatedly providing incorrect credentials:
+ ```
 net user testuser Password123! /add
 for ($i=0; $i -lt 10; $i++) 
 {
-  net use \\localhost\IPC$  wrongpass /user:testuser > $null 2>&1
+  net use \\localhost\IPC$ wrongpass /user:testuser > $null 2>&1
   Start-Sleep -Milliseconds 500
 }
-
+ ```
 These repeated login failures generated EventCode 4625 in Windows Security logs, forwarded to Splunk Cloud in real-time.
 
 ## Detection Logic (SPL Query)
@@ -65,23 +66,32 @@ index=* host=Odus EventCode=4625
 ## Alert Configuration
 
 Trigger Condition: Failed logins ≥ 5 within 10 minutes
+
 Action: Email notification to SOC team
+
 Severity: Medium
+
 Throttle: 10 minutes
+
 Index Used: windows_logs
 
 ## Results
 
 ✅ Successfully detected simulated brute-force attacks
+
 ✅ Dashboard visualized failed attempts by user
+
 ✅ Detection mapped to MITRE ATT&CK T1110
+
 ✅ Demonstrated full SOC detection and response cycle
 
 
 ## Tools Used
 
 Splunk Cloud
+
 Splunk Universal Forwarder
+
 Windows 10 Event Logs
 
 PowerShell
